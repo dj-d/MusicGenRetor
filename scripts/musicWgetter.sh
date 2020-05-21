@@ -6,6 +6,7 @@ MUSIC_ENDPOINT='music/'
 
 GENRES='Blues Electronic Classical Pop Rock Jazz'
 
+cd ..
 mkdir -p "songs"
 cd songs
 

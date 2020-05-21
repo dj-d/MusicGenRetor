@@ -1,15 +1,16 @@
 # MusicGenRetor
 Music genre classification with Machine Learning
 
-First of all you need to start musicWgetter.sh, this script download testing music sorted my genres.
+### Download testing music
+Run __musicWgetter.sh__ in scripts folder (*this script download testing music sorted my genres*).
 
-Supported genres are:
-- Blues
-- Electronic
-- Classical
-- Pop
-- Rock
-- Jazz
+Supported genres:
+ - Blues
+ - Classical
+ - Electronic
+ - Jazz
+ - Pop
+ - Rock
 
 Install musicWgetter.sh dependencies:
 
