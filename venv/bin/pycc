@@ -1,3 +1,0 @@
-#!/home/dj-d/Desktop/Repository/GitHub/MusicGenRetor/venv/bin/python
-from numba.pycc import main
-main()
