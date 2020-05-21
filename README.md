@@ -21,7 +21,7 @@ sudo apt-get install parallel
 sudo pacman -S parallel
 ```
 
-Start musicWgetter:
+Start musicWgetter.sh:
 
 ```
 sudo chmod +x musicWgetter.sh

@@ -15,7 +15,7 @@ for GENRE in $GENRES; do
     mkdir -p $GENRE
     cd $GENRE
 
-    for PAGE_NUMBER in 12; do
+    for PAGE_NUMBER in {1..12} ; do
         PAGE_PARAMS="?sort=track_date_published&d=1&page=${PAGE_NUMBER}"
         PAGE_URL=${CRAWLING_URL}${PAGE_PARAMS}
 
