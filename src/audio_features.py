@@ -82,6 +82,7 @@ class AudioFeatures:
 
         return sum(zero_crossing)
 
+    # TODO: Add DOC
     @staticmethod
     def normalize(x, axis=0):
         """
@@ -108,6 +109,7 @@ class AudioFeatures:
         plt.plot(t, self.normalize(spectral_centroids), color='r')
         plt.show()
 
+    # TODO: Add DOC
     def plot_spectral_rolloff(self):
         """
 
@@ -134,6 +136,7 @@ class AudioFeatures:
         specshow(mfccs, sr=self.sr, x_axis='time')
         plt.show()
 
+    # TODO: Add DOC
     def plot_perform_mfcc(self):
         """
 
