@@ -25,6 +25,7 @@ sudo pacman -S parallel
 Start musicWgetter.sh:
 
 ```
+cd scripts/
 sudo chmod +x musicWgetter.sh
 ./musicWgetter.sh
 ```
