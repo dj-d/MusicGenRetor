@@ -1,12 +1,10 @@
 import matplotlib.pyplot as plt
-
 from librosa import load, stft, amplitude_to_db, zero_crossings, frames_to_time
-from librosa.feature import spectral_centroid, spectral_rolloff, mfcc, chroma_stft
-from librosa.display import waveplot, specshow
-from librosa.util import example_audio_file
 from librosa.beat import tempo
+from librosa.display import waveplot, specshow
+from librosa.feature import spectral_centroid, spectral_rolloff, mfcc, chroma_stft
 from librosa.onset import onset_strength
-
+from librosa.util import example_audio_file
 from sklearn.preprocessing import minmax_scale, scale
 
 
@@ -22,7 +20,11 @@ class AudioFeatures:
         :param audio_path: path of audio file
         """
 
-        self.y, self.sr = load(path=audio_path, sr=44100)
+        # sr=44100
+        self.y, self.sr = load(path=audio_path, sr=1000)
+
+    def get_audio_time_series(self):
+        return self.y
 
     def plot_audio(self):
         """
@@ -171,4 +173,4 @@ class AudioFeatures:
 
         onset_env = onset_strength(self.y, sr=self.sr)
 
-        return tempo(onset_envelope=onset_env, sr=self.sr)[0]
+        return int(tempo(onset_envelope=onset_env, sr=self.sr)[0])
