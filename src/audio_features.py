@@ -29,6 +29,12 @@ class AudioFeatures:
         self.y, self.sr = load(path=audio_path)
 
     def get_audio_time_series(self):
+        """
+        Get all audio points
+
+        :return: Numpy Array
+        """
+
         return self.y
 
     def plot_audio(self):
