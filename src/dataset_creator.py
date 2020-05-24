@@ -1,5 +1,6 @@
 from os import path, walk, listdir
 from sys import stdout
+import os
 
 import pandas as pd
 from pip._vendor.distlib.compat import raw_input
@@ -28,7 +29,7 @@ class DatasetCreator:
     def load_song(self, path):
         audio_features = AudioFeatures(path)
 
-        title = path.basename(path)
+        title = os.path.basename(path)
         bpm = audio_features.get_bpm()
         zero_crossing_rate = audio_features.get_zero_crossing_rate()
         audio_time_series = audio_features.get_audio_time_series()
