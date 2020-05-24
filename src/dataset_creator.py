@@ -17,7 +17,7 @@ actual_id = 0
 attrs = ['Title', 'bpm', 'zero_crossing_rate', 'audio_time_series']
 df = pd.DataFrame(columns=attrs)
 
-recreate = False
+recreate = True
 dataset_name = 'Dataset'
 
 
@@ -56,6 +56,7 @@ def load_song(path):
 # Starting Dataset Creation
 if os.path.exists(dataset_name):
     print('Existing dataset')
+    recreate = False
     sys.stdout.write('Create new dataset? ' + '[y/N]')
     choice = raw_input().lower()
     if choice == 'Y' or choice == 'y':
