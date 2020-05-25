@@ -6,9 +6,10 @@ MUSIC_ENDPOINT='music/'
 
 GENRES='Blues Electronic Classical Pop Rock Jazz'
 
-cd ..
-mkdir -p "songs"
-cd songs
+DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+cd "${DIR}/.."
+mkdir -p "songs" && cd songs
 
 for GENRE in $GENRES; do
     echo "Crawling: ${GENRE} "
