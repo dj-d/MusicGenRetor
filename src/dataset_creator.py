@@ -14,7 +14,7 @@ script_path = os.path.dirname(os.path.realpath(__file__))
 dir_path = os.path.abspath(script_path + '/..') + '/songs'
 
 actual_id = 0
-attrs = ['Title', 'bpm', 'zero_crossing_rate', 'audio_time_series']
+attrs = ['Title', 'bpm', 'zero_crossing_rate', 'audio_time_series', 'genre']
 df = pd.DataFrame(columns=attrs)
 
 recreate = True
@@ -45,9 +45,10 @@ def load_song(path):
     bpm = audio_features.get_bpm()
     zero_crossing_rate = audio_features.get_zero_crossing_rate()
     audio_time_series = audio_features.get_audio_time_series()
+    genre = os.path.basename(os.path.dirname(path))
 
     # Adding song to Dataset
-    song = pd.Series([title, bpm, zero_crossing_rate, audio_time_series], index=attrs)
+    song = pd.Series([title, bpm, zero_crossing_rate, audio_time_series, genre], index=attrs)
     df = df.append(song, ignore_index=True)
 
     actual_id = actual_id + 1
