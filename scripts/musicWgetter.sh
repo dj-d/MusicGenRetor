@@ -17,16 +17,23 @@ for GENRE in $GENRES; do
 
     mkdir -p $GENRE && cd $GENRE
 
-    for PAGE_NUMBER in {1..1} ; do
+    for PAGE_NUMBER in {1..250} ; do
         PAGE_PARAMS="?sort=track_date_published&d=1&page=${PAGE_NUMBER}"
         PAGE_URL=${CRAWLING_URL}${PAGE_PARAMS}
 
         wget $PAGE_URL -q -O ${GENRE}_${PAGE_NUMBER}
 
-	BASE_URL_ESCAPED=$(${BASE_URL@Q}${MUSIC_ENDPOINT@Q} | tr -d \')
-	URL_REGEX='(?<=href=")'${BASE_URL_ESCAPED}'[^"]*'
+	PATTERN='https://files.freemusicarchive.org/storage-freemusicarchive-org/music/'
+	BASE_URL_ESCAPED=$(echo ${PATTERN} | sed 's/\//\\\//g')
 
-        grep -Po ${URL_REGEX} ${GENRE}_${PAGE_NUMBER} | parallel --gnu "wget -A '.mp3' {} "
+	BEHIND_PATTERN=$(cat <<EOF
+>${GENRE}</a>[[:space:]]</span>[[:space:]]</div>[[:space:]]<span[[:space:]]class="playicn">[[:space:]]<a[[:space:]]href="
+EOF
+)
+	BEHIND_PATTERN_ESCAPED=$(echo ${BEHIND_PATTERN} | sed 's/\//\\\//g')
+	URL_REGEX='(?<='${BEHIND_PATTERN_ESCAPED}')'${BASE_URL_ESCAPED}'[^"]*'
+
+	grep -zPo ${URL_REGEX} ${GENRE}_${PAGE_NUMBER} | tr "\0" "\n" | xargs -0 -n1 | parallel --gnu "wget -A '.mp3' {}"
 
         echo -e "\n"
     done
