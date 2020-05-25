@@ -6,6 +6,7 @@ import pandas as pd
 from pip._vendor.distlib.compat import raw_input
 
 from src.audio_features import AudioFeatures
+from src.populate_thread import PopulateThread
 
 DEFAULT_FOLDER_NAME = 'songs'
 DEFAULT_INDEX = ['Title', 'bpm', 'zero_crossing_rate', 'audio_time_series']
@@ -40,23 +41,25 @@ class DatasetCreator:
         self.id += 1
 
     def populate(self, data_path):
+        threads = []
+
         print('Loading data from: ' + data_path)
 
         for root, directories, files in walk(data_path):
             for directory in directories:
-                subdir_path = path.join(data_path, directory)
+                # TODO: Work at 50%
+                threads.append(PopulateThread(self.id, data_path, directory, self.index, self.data_frame))
 
-                walk(subdir_path)
+            for thread in threads:
+                thread.start()
 
-                print('\n---------- ' + directory + ' ----------\n')
-
-                files = listdir(subdir_path)
-
-                for file in files:
-                    print(file)
-
-                    file_path = path.join(subdir_path, file)
-                    self.load_song(file_path)
+            # TODO: To improve
+            threads[0].join()
+            threads[1].join()
+            threads[2].join()
+            threads[3].join()
+            threads[4].join()
+            threads[5].join()
 
     def main(self):
         recreate = True
