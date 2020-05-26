@@ -18,11 +18,16 @@ attrs = ['Title', 'bpm', 'zero_crossing_rate', 'audio_time_series', 'genre']
 df = pd.DataFrame(columns=attrs)
 
 recreate = True
+upgrade = False
 dataset_name = 'Dataset'
 
 
 def populate(data_path):
     global actual_id
+
+    if upgrade:
+        actual_id = len(df.index)
+
     print('Loading data from:\t' + data_path)
     for root, directories, files in os.walk(data_path):
         for directory in directories:
@@ -63,9 +68,15 @@ if os.path.exists(dataset_name):
     if choice == 'Y' or choice == 'y':
         recreate = True
 
+    upgrade = False
+    sys.stdout.write('Upgrade the dataset? ' + '[y/N]')
+    choice = raw_input().lower()
+    if choice == 'Y' or choice == 'y':
+        upgrade = True
+
     df = pd.read_pickle(dataset_name)
 
-if recreate:
+if recreate or upgrade:
     # Populating Dataset
     populate(dir_path)
     # Save Dataset
