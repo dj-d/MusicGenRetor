@@ -1,5 +1,11 @@
+import math
+
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+from numpy import array
 from sklearn.cluster import KMeans
+from sklearn.feature_extraction import image
 
 # TODO: change the script name to a more meaningful one
 
@@ -18,7 +24,14 @@ def load_dataset():
 
 
 def clustering():
-    dataset = load_dataset()
+    df = load_dataset()
+
+    ids = df[attrs[0]]
+    genres_true = df[attrs[len(attrs) - 1]]
+    dataset = df.loc[0:, attrs[1]:attrs[len(attrs) - 2]]
+    # dataset.loc[1:, attrs[1]:attrs[len(attrs) - 3]] = preprocessing.normalize(dataset.loc[1:, attrs[1]:attrs[len(attrs) - 3]])
+    # dataset = preprocessing.normalize(dataset)
+
     kmeans = KMeans(n_clusters=len(genres), random_state=0).fit(dataset)
     # kmeans.labels_
     print(kmeans.labels_)
@@ -27,4 +40,47 @@ def clustering():
     print(kmeans.cluster_centers_)
 
 
-clustering()
+def spectral_analisys(img):
+    mask = img.astype(bool)
+    img = img.astype(float)
+    # Convert the image into a graph with the value of the gradient on the
+    # edges.
+    graph = image.img_to_graph(img, mask=mask)
+
+    # Take a decreasing function of the gradient: we take it weakly
+    # dependent from the gradient the segmentation is close to a voronoi
+    graph.data = np.exp(-graph.data / graph.data.std())
+
+    # Force the solver to be arpack, since amg is numerically
+    # unstable on this example
+    # labels = spectral_clustering(graph, n_clusters=4, eigen_solver='arpack')
+    # label_im = np.full(mask.shape, -1.)
+    # label_im[mask] = labels
+
+    plt.matshow(img)
+    # plt.matshow(label_im)
+    plt.show()
+
+
+def array_to_img(arr):
+    # x = 1000
+    x = int(math.sqrt(len(arr)))
+    to_fill = x - (len(arr) % x)
+
+    for i in range(to_fill):
+        arr = np.append(arr, [0])
+    # print(len(arr))
+
+    n_array = array(arr)
+    matrix = n_array.reshape((x, -1))
+    plt.imshow(matrix, cmap='tab20c')
+    plt.colorbar()
+    plt.show()
+
+
+dataset = load_dataset()
+song = 0
+print(dataset.loc[song, ['Title', 'genre']])
+array_to_img(dataset.loc[song, attrs[len(attrs) - 2]])
+# spectral_analisys()
+# clustering()
