@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from numpy import array
+from sklearn import preprocessing
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction import image
 
@@ -70,16 +71,17 @@ def array_to_img(arr):
     for i in range(to_fill):
         arr = np.append(arr, [0])
     # print(len(arr))
-
     n_array = array(arr)
     matrix = n_array.reshape((x, -1))
-    plt.imshow(matrix, cmap='tab20c')
+    # matrix = preprocessing.normalize(matrix)
+    matrix = preprocessing.minmax_scale(matrix)
+    plt.imshow(matrix, cmap='Spectral')
     plt.colorbar()
     plt.show()
 
 
 dataset = load_dataset()
-song = 0
+song = 10
 print(dataset.loc[song, ['Title', 'genre']])
 array_to_img(dataset.loc[song, attrs[len(attrs) - 2]])
 # spectral_analisys()
