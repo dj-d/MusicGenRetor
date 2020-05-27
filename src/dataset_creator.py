@@ -71,8 +71,8 @@ def load_song(path):
     audio_features = AudioFeatures(path)
 
     # Following attrs list
-    #    title = os.path.basename(path)
-    title = path.split('.')[0]
+    file_name = os.path.basename(path)
+    title = file_name.split('.')[0]
     bpm = audio_features.get_bpm()
     zero_crossing_rate = audio_features.get_zero_crossing_rate()
     audio_time_series = audio_features.get_audio_time_series()
