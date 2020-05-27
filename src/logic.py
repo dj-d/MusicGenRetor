@@ -81,8 +81,13 @@ def array_to_img(arr):
 
 
 dataset = load_dataset()
-song = 10
-print(dataset.loc[song, ['Title', 'genre']])
-array_to_img(dataset.loc[song, attrs[len(attrs) - 2]])
+# song = 10
+# print(dataset.loc[song, ['Title', 'genre']])
+# array_to_img(dataset.loc[song, attrs[len(attrs) - 2]])
+
+for song in range(len(dataset)):
+    print(dataset.loc[song, ['Title', 'genre']])
+    array_to_img(dataset.loc[song, attrs[len(attrs) - 2]])
+
 # spectral_analisys()
 # clustering()
