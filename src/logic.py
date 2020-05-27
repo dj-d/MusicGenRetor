@@ -13,7 +13,8 @@ df = pd.DataFrame(columns=attrs)
 
 def load_dataset():
     global df
-    return pd.read_pickle(dataset_name)
+    # TODO: create bulk load function
+    return pd.read_pickle(dataset_name + '_1')
 
 
 def clustering():
