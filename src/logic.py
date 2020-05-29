@@ -69,9 +69,10 @@ def generate_models():
         for i in range(rows):
             for j in range(columns):
                 model.iloc[i, j] = model.iloc[i, j] / n_songs
-        AudioFeatures().plot_perform_mfcc_by_values(model, sr)
-        model.to_pickle('ImageModel_' + genre)
+        if model.notnull().all().any():
+            AudioFeatures().plot_perform_mfcc_by_values(model, sr)
+            model.to_pickle('ImageModel_' + genre)
 
 
-# load_image_model('ImageModel_Blues')
+# load_image_model('ImageModel_Jazz')
 generate_models()
