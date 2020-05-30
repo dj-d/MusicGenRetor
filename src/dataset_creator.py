@@ -14,7 +14,8 @@ from src.audio_features import AudioFeatures
 script_path = os.path.dirname(os.path.realpath(__file__))
 dir_path = os.path.abspath(script_path + '/..') + '/songs'
 attrs = ['Title', 'bpm', 'zero_crossing_rate', 'audio_time_series', 'genre']
-dataset_name = 'Dataset'
+datasets_path = 'Datasets' + '/'
+dataset_base_name = datasets_path + 'Dataset'
 
 actual_id = 0
 df = pd.DataFrame(columns=attrs)
@@ -31,17 +32,17 @@ def bulk_manager(mode):
     global df, actual_id
     i = 1
 
-    while os.path.exists(dataset_name + '_' + str(i)):
+    while os.path.exists(dataset_base_name + '_' + str(i)):
         i += 1
 
     if mode == save:
         if upgrade or recreate:
-            df.to_pickle(dataset_name + '_' + str(i - 1))
+            df.to_pickle(dataset_base_name + '_' + str(i - 1))
         else:
-            df.to_pickle(dataset_name + '_' + str(i))
+            df.to_pickle(dataset_base_name + '_' + str(i))
         df = pd.DataFrame(columns=attrs)
     elif mode == load:
-        df = pd.read_pickle(dataset_name + '_' + str(i - 1))
+        df = pd.read_pickle(dataset_base_name + '_' + str(i - 1))
         actual_id = len(df.index)
 
 
@@ -86,7 +87,7 @@ def load_song(path):
 
 
 # Starting Dataset Creation
-if os.path.exists(dataset_name + '_1'):
+if os.path.exists(dataset_base_name + '_1'):
     print('Existing dataset/s')
     recreate = False
     sys.stdout.write('Re-create new datasets? (Actual files will be lost) ' + '[y/N]')

@@ -1,14 +1,12 @@
-import matplotlib.pyplot as plt
-
-from librosa.beat import tempo
-from librosa.onset import onset_strength
-from librosa.display import waveplot, specshow
-from librosa import load, stft, amplitude_to_db, zero_crossings, frames_to_time
-from librosa.feature import spectral_centroid, spectral_bandwidth, spectral_rolloff, mfcc, chroma_stft
-
-from sklearn.preprocessing import minmax_scale, scale
-
 import warnings
+
+import matplotlib.pyplot as plt
+from librosa import load, stft, amplitude_to_db, zero_crossings, frames_to_time
+from librosa.beat import tempo
+from librosa.display import waveplot, specshow
+from librosa.feature import spectral_centroid, spectral_bandwidth, spectral_rolloff, mfcc, chroma_stft
+from librosa.onset import onset_strength
+from sklearn.preprocessing import minmax_scale, scale
 
 
 class AudioFeatures:
@@ -244,6 +242,36 @@ class AudioFeatures:
 
         mfccs = mfcc(y, sr=sr)
         mfccs = scale(mfccs, axis=1)
+
+        specshow(mfccs, sr=sr, x_axis='time')
+        plt.show()
+
+    def get_perform_mfcc(self, outside_series=None, outside_sr=None):
+        """
+
+        :param outside_series:
+        :param outside_sr:
+        :return:
+        """
+
+        y = self.select_series(outside_series)
+        sr = self.select_sr(outside_sr)
+
+        mfccs = mfcc(y, sr=sr)
+        mfccs = scale(mfccs, axis=1)
+
+        return mfccs
+
+    def plot_perform_mfcc_by_values(self, mfccs=None, outside_sr=None):
+        """
+
+        :param mfccs:
+        :param outside_sr:
+        :return:
+        """
+
+        mfccs = scale(mfccs, axis=1)
+        sr = self.select_sr(outside_sr)
 
         specshow(mfccs, sr=sr, x_axis='time')
         plt.show()
