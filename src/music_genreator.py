@@ -8,10 +8,11 @@ class MusicGenRator:
     def __init__(self, song_path):
         DatasetsCreator()
         training = Training()
-        testing = Testing()
         training.generate_models()
+        testing = Testing()
         training.plot_models()
 
+        print('Testing a song:\t' + song_path)
         print(testing.compare_song_by_path(song_path))
 
 

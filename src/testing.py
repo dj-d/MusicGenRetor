@@ -42,13 +42,14 @@ class Testing:
     def compare_song_by_path(self, song_path):
         audio_features = AudioFeatures(song_path)
         series = audio_features.get_audio_time_series()
-        #     self.compare_song(series)
+        return self.compare_song(series)
         # TODO: compare song by series not path
-        # def compare_song(self, series):
+
+    def compare_song(self, series):
         series.sort(axis=0)
 
         # mfcc = AudioFeatures.get_perform_mfcc(series, sr)
-        mfcc = audio_features.get_perform_mfcc(series, sr)
+        mfcc = AudioFeatures().get_perform_mfcc(series, sr)
         song = pd.DataFrame(np.zeros((rows, columns)))
         for i in range(rows):
             for j in range(columns):
@@ -61,14 +62,17 @@ class Testing:
             compare_value = self.image_compare(song, model)
             result[genre] = compare_value
 
+        # return result
         return sorted(result.items(), key=lambda kv: kv[1])
 
     def testing(self):
         existing_datasets = 0
-        while os.path.exists(dataset_path + '_' + str(existing_datasets)):
+        total_accuracy = 0
+        total_records = 0
+        while os.path.exists(dataset_path + '_' + str(existing_datasets + 1)):
             existing_datasets += 1
 
-        for n in range(1, existing_datasets):
+        for n in range(1, existing_datasets + 1):
             df_test = pd.read_pickle(dataset_path + '_' + str(n))
 
             for song in range(len(df_test)):
@@ -83,3 +87,11 @@ class Testing:
                 print(result)
                 print('-- Real genre --')
                 print(genre)
+
+                for res in result:
+                    if res[0] == genre:
+                        record_accuracy = len(genre) - list(result).index(res)
+                        total_accuracy += record_accuracy
+                        print('Song Accuracy:\t' + str(record_accuracy))
+                total_records += 1
+        print('Accuracy:\t' + str(total_accuracy) + '\tMax Accuracy:\t' + str(total_records * len(genres)))
