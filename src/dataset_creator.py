@@ -132,14 +132,14 @@ class DatasetsCreator:
                 print('---------- ' + directory + ' ----------')
                 files = os.listdir(subdir_path)
                 training_drawns = self.split_dataset(len(files), training_percentual)
+                genre_records = 0
                 for file in files:
                     file_path = os.path.join(subdir_path, file)
                     file_name = os.path.basename(file_path)
                     title = file_name.split('.')[0]
                     print('Analyzing song: \t' + title)
                     if title not in df_training[attrs[0]].values and title not in df_training[attrs[0]].values:
-                        total_records = training_records + test_records
-                        if total_records in training_drawns:
+                        if genre_records in training_drawns:
                             df_training = self.load_song(file_path, df_training)
                             training_records += 1
                             if (training_records % bulk_save_number) == 0:
@@ -149,5 +149,6 @@ class DatasetsCreator:
                             test_records += 1
                             if (test_records % bulk_save_number) == 0:
                                 self.bulk_manager(save, test_type)
+                        genre_records += 1
                     else:
                         print('Record exist: skipping ...')
