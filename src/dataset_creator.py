@@ -72,7 +72,7 @@ class DatasetsCreator:
 
     @staticmethod
     def bulk_manager(mode, dataset_type):
-        global df_training, df_test, training_records, test_records
+        global df_training, df_test, training_records, test_records, upgrade, recreate
         dataset_path = datasets_directory + dataset_type + '/' + dataset_base_name
 
         existing_datasets = 1
@@ -82,6 +82,8 @@ class DatasetsCreator:
         if mode == save:
             if upgrade or recreate:
                 existing_datasets -= 1
+                upgrade = False
+                recreate = False
             if dataset_type == training_type:
                 df_training.to_pickle(dataset_path + '_' + str(existing_datasets))
                 df_training = pd.DataFrame(columns=attrs)
