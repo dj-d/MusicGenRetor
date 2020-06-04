@@ -129,10 +129,10 @@ class DatasetsCreator:
         return df
 
     @staticmethod
-    def split_dataset(elements_number, split_percentual):
+    def split_dataset(elements_number, split_percentage):
         numbers = range(0, elements_number)
 
-        return random.sample(numbers, int(elements_number * split_percentual))
+        return random.sample(numbers, int(elements_number * split_percentage))
 
     def populate(self, data_path):
         print('Loading data from:\t' + data_path)
