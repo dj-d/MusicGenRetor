@@ -1,7 +1,7 @@
 import os
 import sys
 
-from conf import constant
+from conf import constants as cn
 
 import numpy as np
 import pandas as pd
@@ -13,22 +13,22 @@ from src.audio_features import AudioFeatures
 
 class Testing:
     def __init__(self):
-        self.dataset_base_name = constant.DATASET_BASE_NAME
+        self.dataset_base_name = cn.DATASET_BASE_NAME
 
-        self.datasets_directory = constant.DATASET_DIRECTORY
-        self.testing_datasets_path = constant.TESTING_DATASET_PATH
+        self.datasets_directory = cn.DATASET_DIRECTORY
+        self.testing_datasets_path = cn.TESTING_DATASET_PATH
 
         self.datasets_path = self.testing_datasets_path + self.dataset_base_name
 
-        self.models_path = constant.MODELS_PATH
+        self.models_path = cn.MODELS_PATH
 
-        self.genres = constant.GENRES
-        self.attrs = constant.ATTRS
+        self.genres = cn.GENRES
+        self.attrs = cn.ATTRS
 
-        self.sr = constant.SR
+        self.sr = cn.SR
 
-        self.rows = constant.ROWS
-        self.columns = constant.COLUMNS
+        self.rows = cn.ROWS
+        self.columns = cn.COLUMNS
 
         # TODO: It shouldn't be here
         if os.path.exists(self.testing_datasets_path + self.dataset_base_name + '_1'):
