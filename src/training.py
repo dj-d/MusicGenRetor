@@ -63,6 +63,8 @@ class Training:
         while os.path.exists(self.training_datasets_path + self.dataset_base_name + '_' + str(n_datasets)):
             n_datasets += 1
 
+        n_datasets -= 1
+
         for n in range(1, n_datasets + 1):
             dataset = self.load_dataset(n)
 
