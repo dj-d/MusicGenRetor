@@ -60,7 +60,7 @@ class Training:
         # Define number of existing datasets
         n_datasets = 1
 
-        while os.path.exists(self.dataset_base_name + '_' + str(n_datasets)):
+        while os.path.exists(self.training_datasets_path + self.dataset_base_name + '_' + str(n_datasets)):
             n_datasets += 1
 
         for n in range(1, n_datasets + 1):
