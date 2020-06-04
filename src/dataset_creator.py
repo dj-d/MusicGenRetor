@@ -10,6 +10,14 @@ from pip._vendor.distlib.compat import raw_input
 from src.audio_features import AudioFeatures
 
 
+# get_spectrogram_db
+# get_zero_crossing_rate
+# get_spectral_centroid
+# get_spectral_bandwidth
+# get_spectral_rolloff
+# get_mfcc | get_perform_mfcc
+# get_chroma_frequencies
+
 class DatasetsCreator:
     def __init__(self):
         script_path = os.path.dirname(os.path.realpath(__file__))  # TODO: To change

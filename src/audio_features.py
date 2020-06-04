@@ -91,6 +91,11 @@ class AudioFeatures:
         plt.grid()
         plt.show()
 
+    def get_spectrogram_db(self, outside_series=None):
+        y = self.select_series(outside_series)
+
+        return amplitude_to_db(abs(stft(y)))
+
     def plot_spectrogram(self, outside_series=None, outside_sr=None):
         """
         Plot spectrogram of frequencies of audio
@@ -100,23 +105,24 @@ class AudioFeatures:
         :return:
         """
 
-        y = self.select_series(outside_series)
         sr = self.select_sr(outside_sr)
 
-        x_db = amplitude_to_db(abs(stft(y)))
+        x_db = self.get_spectrogram_db(outside_series)
 
         plt.figure(figsize=(14, 5))
         specshow(x_db, sr=sr, x_axis='time', y_axis='hz')
         plt.show()
 
-    def get_zero_crossing_rate(self):
+    def get_zero_crossing_rate(self, outside_series=None):
         """
         Return the number of times the signal changes sign
 
         :return: Integer
         """
 
-        zero_crossing = zero_crossings(self.y, pad=False)
+        y = self.select_series(outside_series)
+
+        zero_crossing = zero_crossings(y, pad=False)
 
         return sum(zero_crossing)
 
@@ -147,13 +153,16 @@ class AudioFeatures:
 
         return minmax_scale(x, axis=axis)
 
-    def get_spectral_centroid(self):
+    def get_spectral_centroid(self, outside_series=None, outside_sr=None):
         """
 
         :return:
         """
 
-        return spectral_centroid(self.y, sr=self.sr)[0]
+        y = self.select_series(outside_series)
+        sr = self.select_sr(outside_sr)
+
+        return spectral_centroid(y, sr=sr)[0]
 
     def plot_spectral_centroid(self, outside_series=None, outside_sr=None):
         """
@@ -167,7 +176,7 @@ class AudioFeatures:
         y = self.select_series(outside_series)
         sr = self.select_sr(outside_sr)
 
-        spectral_centroids = spectral_centroid(y, sr=sr)[0]
+        spectral_centroids = self.get_spectral_centroid(outside_series, outside_sr)
 
         frames = range(len(spectral_centroids))
         t = frames_to_time(frames)
@@ -176,7 +185,7 @@ class AudioFeatures:
         plt.plot(t, self.normalize(spectral_centroids), color='r')
         plt.show()
 
-    def get_spectral_bandwidth(self):
+    def get_spectral_bandwidth(self, outside_series=None, outside_sr=None):
         """
 
         :param outside_series:
@@ -184,9 +193,16 @@ class AudioFeatures:
         :return:
         """
 
-        spectral_bandwidths = spectral_bandwidth(self.y, sr=self.sr)
+        y = self.select_series(outside_series)
+        sr = self.select_sr(outside_sr)
 
-        return spectral_bandwidths
+        return spectral_bandwidth(y, sr=sr)
+
+    def get_spectral_rolloff(self, outside_series=None, outside_sr=None):
+        y = self.select_series(outside_series)
+        sr = self.select_sr(outside_sr)
+
+        return spectral_rolloff(y + 0.01, sr=sr)[0]
 
     # TODO: Add DOC
     def plot_spectral_rolloff(self, outside_series=None, outside_sr=None):
@@ -200,7 +216,7 @@ class AudioFeatures:
         y = self.select_series(outside_series)
         sr = self.select_sr(outside_sr)
 
-        spectral_rolloffs = spectral_rolloff(y + 0.01, sr=sr)[0]
+        spectral_rolloffs = self.get_spectral_rolloff(y, sr)
 
         frames = range(len(spectral_rolloffs))
         t = frames_to_time(frames)
@@ -208,6 +224,12 @@ class AudioFeatures:
         waveplot(y, sr=sr)
         plt.plot(t, self.normalize(spectral_rolloffs), color='r')
         plt.show()
+
+    def get_mfcc(self, outside_series=None, outside_sr=None):
+        y = self.select_series(outside_series)
+        sr = self.select_sr(outside_sr)
+
+        return mfcc(y, sr=sr)
 
     def plot_mfcc(self, outside_series=None, outside_sr=None):
         """
@@ -223,10 +245,18 @@ class AudioFeatures:
         y = self.select_series(outside_series)
         sr = self.select_sr(outside_sr)
 
-        mfccs = mfcc(y, sr=sr)
+        mfccs = self.get_mfcc(y, sr)
 
         specshow(mfccs, sr=sr, x_axis='time')
         plt.show()
+
+    def get_perform_mfcc(self, outside_series=None, outside_sr=None):
+        y = self.select_series(outside_series)
+        sr = self.select_sr(outside_sr)
+
+        mfccs = mfcc(y, sr=sr)
+
+        return scale(mfccs, axis=1)
 
     # TODO: Add DOC
     def plot_perform_mfcc(self, outside_series=None, outside_sr=None):
@@ -240,27 +270,10 @@ class AudioFeatures:
         y = self.select_series(outside_series)
         sr = self.select_sr(outside_sr)
 
-        mfccs = mfcc(y, sr=sr)
-        mfccs = scale(mfccs, axis=1)
+        mfccs = self.get_perform_mfcc(y, sr)
 
         specshow(mfccs, sr=sr, x_axis='time')
         plt.show()
-
-    def get_perform_mfcc(self, outside_series=None, outside_sr=None):
-        """
-
-        :param outside_series:
-        :param outside_sr:
-        :return:
-        """
-
-        y = self.select_series(outside_series)
-        sr = self.select_sr(outside_sr)
-
-        mfccs = mfcc(y, sr=sr)
-        mfccs = scale(mfccs, axis=1)
-
-        return mfccs
 
     def plot_perform_mfcc_by_values(self, mfccs=None, outside_sr=None):
         """
@@ -276,6 +289,14 @@ class AudioFeatures:
         specshow(mfccs, sr=sr, x_axis='time')
         plt.show()
 
+    def get_chroma_frequencies(self, outside_series=None, outside_sr=None):
+        y = self.select_series(outside_series)
+        sr = self.select_sr(outside_sr)
+
+        hop_length = 512
+
+        return hop_length, chroma_stft(y, sr=sr, hop_length=hop_length)
+
     def plot_chroma_frequencies(self, outside_series=None, outside_sr=None):
         """
         Plot audio where the entire spectrum is projected on 12 bins representing the 12 semitones of the musical octave
@@ -288,9 +309,11 @@ class AudioFeatures:
         y = self.select_series(outside_series)
         sr = self.select_sr(outside_sr)
 
-        hop_length = 512
+        get_chroma_frequencies = self.get_chroma_frequencies(y, sr)
 
-        chroma_gram = chroma_stft(y, sr=sr, hop_length=hop_length)
+        hop_length = get_chroma_frequencies[0]
+
+        chroma_gram = get_chroma_frequencies[1]
 
         plt.figure(figsize=(14, 5))
         specshow(chroma_gram, x_axis='time', y_axis='chroma', hop_length=hop_length, cmap='coolwarm')
