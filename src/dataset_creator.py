@@ -142,15 +142,18 @@ class DatasetsCreator:
                 subdir_path = os.path.join(data_path, directory)
                 os.walk(subdir_path)
 
-                print('---------- ' + directory + ' ----------')
+                print('\n---------- ' + directory + ' ----------\n')
 
                 files = os.listdir(subdir_path)
+
                 training_drawns = self.split_dataset(len(files), self.training_percentage)
+
                 genre_records = 0
 
                 for file in files:
                     file_path = os.path.join(subdir_path, file)
                     file_name = os.path.basename(file_path)
+
                     title = file_name.split('.')[0]
 
                     print('Analyzing song: \t' + title)
