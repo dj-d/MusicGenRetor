@@ -1,109 +1,178 @@
-"""
-This script create the dataset needed to ML Algorithms
-"""
-
 import os
+import random
 import sys
+
+from conf import constants as cn
 
 import pandas as pd
 from pip._vendor.distlib.compat import raw_input
 
 from src.audio_features import AudioFeatures
 
-# TODO: create config file
-script_path = os.path.dirname(os.path.realpath(__file__))
-dir_path = os.path.abspath(script_path + '/..') + '/songs'
-attrs = ['Title', 'bpm', 'zero_crossing_rate', 'audio_time_series', 'genre']
-dataset_name = 'Dataset'
 
-actual_id = 0
-df = pd.DataFrame(columns=attrs)
-recreate = True
-upgrade = False
+class DatasetsCreator:
+    def __init__(self):
+        script_path = os.path.dirname(os.path.realpath(__file__))  # TODO: To change
+        self.dir_path = os.path.abspath(script_path + '/..') + '/songs'  # TODO: To change
 
-# Bulk manager
-bulk_save_number = 300
-save = 'save'
-load = 'load'
+        self.dataset_base_name = cn.DATASET_BASE_NAME
 
+        self.datasets_directory = cn.DATASET_DIRECTORY
+        self.training_datasets_path = cn.TRAINING_DATASET_PATH
+        self.testing_datasets_path = cn.TESTING_DATASET_PATH
 
-def bulk_manager(mode):
-    global df, actual_id
-    i = 1
+        self.attrs = cn.ATTRS
 
-    while os.path.exists(dataset_name + '_' + str(i)):
-        i += 1
+        self.training_percentage = 0.8
 
-    if mode == save:
-        if upgrade or recreate:
-            df.to_pickle(dataset_name + '_' + str(i - 1))
+        self.training_type = 'Training'
+        self.testing_type = 'Testing'
+
+        self.training_records = 0
+        self.testing_records = 0
+
+        self.df_training = pd.DataFrame(columns=self.attrs)
+        self.df_testing = pd.DataFrame(columns=self.attrs)
+
+        self.recreate = False
+        self.upgrade = False
+        self.none_exist = False
+
+        self.bulk_save_number = 150
+        self.save = "save"
+        self.load = "load"
+
+        # TODO: It shouldn't be here
+        # Starting Dataset Creation
+        if os.path.exists(self.training_datasets_path + self.dataset_base_name + '_1'):
+            print('Existing dataset/s')
+
+            # TODO: It could be removed from here
+            self.recreate = False
+
+            sys.stdout.write('Re-create new datasets? (Actual files will be lost) ' + '[y/N]')
+            choice = raw_input().lower()
+
+            if choice == 'Y' or choice == 'y':
+                self.recreate = True
+            else:
+                # TODO: It could be removed from here
+                self.upgrade = False
+
+                sys.stdout.write('Upgrade the dataset? ' + '[y/N]')
+                choice = raw_input().lower()
+
+                if choice == 'Y' or choice == 'y':
+                    self.upgrade = True
+
+                    self.bulk_manager(self.load, self.training_type)
+                    self.bulk_manager(self.load, self.testing_type)
         else:
-            df.to_pickle(dataset_name + '_' + str(i))
-        df = pd.DataFrame(columns=attrs)
-    elif mode == load:
-        df = pd.read_pickle(dataset_name + '_' + str(i - 1))
-        actual_id = len(df.index)
+            self.none_exist = True
 
+        if self.recreate or self.upgrade or self.none_exist:
+            # Populating Dataset
+            self.populate(self.dir_path)
 
-def populate(data_path):
-    print('Loading data from:\t' + data_path)
-    for root, directories, files in os.walk(data_path):
-        for directory in directories:
-            subdir_path = os.path.join(data_path, directory)
-            os.walk(subdir_path)
-            print('---------- ' + directory + ' ----------')
-            files = os.listdir(subdir_path)
-            for file in files:
-                file_path = os.path.join(subdir_path, file)
-                file_name = os.path.basename(file_path)
-                title = file_name.split('.')[0]
-                print(title)
-                if title not in df[attrs[0]].values:
-                    load_song(file_path)
-                    if (actual_id % bulk_save_number) == 0:
-                        bulk_manager(save)
-                else:
-                    print('Record exist: skipping ...')
+            # Save Dataset
+            self.bulk_manager(self.save, self.training_type)
+            self.bulk_manager(self.save, self.testing_type)
 
+            print('Train records:\t' + str(self.training_records))
+            print('Test records:\t' + str(self.testing_records))
 
-def load_song(path):
-    global df, actual_id, attrs
-    audio_features = AudioFeatures(path)
+    def bulk_manager(self, mode, dataset_type):
+        dataset_path = self.datasets_directory + dataset_type + '/' + self.dataset_base_name
 
-    # Following attrs list
-    file_name = os.path.basename(path)
-    title = file_name.split('.')[0]
-    bpm = audio_features.get_bpm()
-    zero_crossing_rate = audio_features.get_zero_crossing_rate()
-    audio_time_series = audio_features.get_audio_time_series()
-    genre = os.path.basename(os.path.dirname(path))
+        existing_datasets = 1
 
-    # Adding song to Dataset
-    song = pd.Series([title, bpm, zero_crossing_rate, audio_time_series, genre], index=attrs)
-    df = df.append(song, ignore_index=True)
+        while os.path.exists(dataset_path + '_' + str(existing_datasets)):
+            existing_datasets += 1
 
-    actual_id = actual_id + 1
+        if mode == self.save:
+            if self.upgrade or self.recreate:
+                existing_datasets -= 1
+                self.upgrade = False
+                self.recreate = False
 
+            if dataset_type == self.training_type:
+                self.df_training.to_pickle(dataset_path + '_' + str(existing_datasets))
+                self.df_training = pd.DataFrame(columns=self.attrs)
+            elif dataset_type == self.testing_type:
+                self.df_testing.to_pickle(dataset_path + '_' + str(existing_datasets))
+                self.df_testing = pd.DataFrame(columns=self.attrs)
+        elif mode == self.load:
+            existing_datasets -= 1
 
-# Starting Dataset Creation
-if os.path.exists(dataset_name + '_1'):
-    print('Existing dataset/s')
-    recreate = False
-    sys.stdout.write('Re-create new datasets? (Actual files will be lost) ' + '[y/N]')
-    choice = raw_input().lower()
-    if choice == 'Y' or choice == 'y':
-        recreate = True
-    else:
-        upgrade = False
-        sys.stdout.write('Upgrade the dataset? ' + '[y/N]')
-        choice = raw_input().lower()
-        if choice == 'Y' or choice == 'y':
-            upgrade = True
-            bulk_manager(load)
+            if dataset_type == self.training_type:
+                self.df_training = pd.read_pickle(dataset_path + '_' + str(existing_datasets))
+                self.training_records = len(self.df_training.index)
+            elif dataset_type == self.testing_type:
+                self.df_testing = pd.read_pickle(dataset_path + '_' + str(existing_datasets))
+                self.testing_records = len(self.df_testing.index)
 
-if recreate or upgrade:
-    # Populating Dataset
-    populate(dir_path)
-    # Save Dataset
-    bulk_manager(save)
-    print('Total records:\t' + str(actual_id))
+    def load_song(self, path, df):
+        audio_features = AudioFeatures(path)
+
+        # Following attrs list
+        file_name = os.path.basename(path)
+        title = file_name.split('.')[0]
+        bpm = audio_features.get_bpm()
+        zero_crossing_rate = audio_features.get_zero_crossing_rate()
+        audio_time_series = audio_features.get_audio_time_series()
+        genre = os.path.basename(os.path.dirname(path))
+
+        # Adding song to Dataset
+        song = pd.Series([title, bpm, zero_crossing_rate, audio_time_series, genre], index=self.attrs)
+        df = df.append(song, ignore_index=True)
+
+        return df
+
+    @staticmethod
+    def split_dataset(elements_number, split_percentage):
+        numbers = range(0, elements_number)
+
+        return random.sample(numbers, int(elements_number * split_percentage))
+
+    def populate(self, data_path):
+        print('Loading data from:\t' + data_path)
+
+        for root, directories, files in os.walk(data_path):
+            for directory in directories:
+                subdir_path = os.path.join(data_path, directory)
+                os.walk(subdir_path)
+
+                print('\n---------- ' + directory + ' ----------\n')
+
+                files = os.listdir(subdir_path)
+
+                training_drawns = self.split_dataset(len(files), self.training_percentage)
+
+                genre_records = 0
+
+                for file in files:
+                    file_path = os.path.join(subdir_path, file)
+                    file_name = os.path.basename(file_path)
+
+                    title = file_name.split('.')[0]
+
+                    print('Analyzing song: \t' + title)
+
+                    if title not in self.df_training[self.attrs[0]].values and title not in self.df_training[self.attrs[0]].values:
+                        if genre_records in training_drawns:
+                            self.df_training = self.load_song(file_path, self.df_training)
+                            self.training_records += 1
+
+                            if (self.training_records % self.bulk_save_number) == 0:
+                                self.bulk_manager(self.save, self.training_type)
+                        else:
+                            self.df_testing = self.load_song(file_path, self.df_testing)
+
+                            self.testing_records += 1
+
+                            if (self.testing_records % self.bulk_save_number) == 0:
+                                self.bulk_manager(self.save, self.testing_type)
+
+                        genre_records += 1
+                    else:
+                        print('Record exist: skipping ...')
