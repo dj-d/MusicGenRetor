@@ -56,7 +56,7 @@ class Testing:
         # TODO: compare song by series not path
 
     def compare_song(self, series):
-        series.sort(axis=0)
+        # series.sort(axis=0)
 
         # mfcc = AudioFeatures.get_perform_mfcc(series, sr)
         mfcc = AudioFeatures().get_perform_mfcc(series, self.sr)
@@ -104,12 +104,17 @@ class Testing:
                 print('-- Real genre --')
                 print(genre)
 
-                for res in result:
-                    if res[0] == genre:
-                        record_accuracy = len(genre) - list(result).index(res)
-                        total_accuracy += record_accuracy
-                        print('Song Accuracy:\t' + str(record_accuracy))
+                if result[0][0] == genre:
+                    total_accuracy += 1
+                else:
+                    print("---------- It not work ----------")
+                    print(result)
+
+                    # if res[0] == genre:
+                    #     record_accuracy = len(genre) - list(result).index(res)
+                    #     total_accuracy += record_accuracy
+                    #     print('Song Accuracy:\t' + str(record_accuracy))
 
                 total_records += 1
 
-        print('Accuracy:\t' + str(total_accuracy) + '\tMax Accuracy:\t' + str(total_records * len(self.genres)))
+        print('Accuracy:\t' + str(total_accuracy) + '\tMax Accuracy:\t' + str(total_records))

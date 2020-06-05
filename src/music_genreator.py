@@ -8,7 +8,7 @@ class MusicGenRator:
     def __init__(self, song_path):
         DatasetsCreator()
         training = Training()
-        training.generate_models()
+        # training.generate_models()
         testing = Testing()
         training.plot_models()
 
@@ -17,5 +17,5 @@ class MusicGenRator:
 
 
 # Testing single song
-test_song_path = '/home/zappaboy/Desktop/Projects/MusicGenRetor/songs/Jazz/Mela_-_01_-_For_Such_a_Thing_to_Land.mp3'
+test_song_path = '/home/dj-d/Desktop/Repository/GitHub/MusicGenRetor/songs/Jazz/Mela_-_01_-_For_Such_a_Thing_to_Land.mp3'
 music_genrator = MusicGenRator(test_song_path)

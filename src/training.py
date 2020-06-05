@@ -1,4 +1,6 @@
 import os
+import sys
+from pip._vendor.distlib.compat import raw_input
 
 from conf import constants as cn
 
@@ -30,6 +32,13 @@ class Training:
 
         self.genres_dfs = {}
         self.init_genres_dfs()
+
+        if os.path.exists(self.models_path + "ImageModel_Pop"):
+            sys.stdout.write('Create new models? ' + '[y/N]')
+            choice = raw_input().lower()
+
+            if choice == 'Y' or choice == 'y':
+                self.generate_models()
 
     def init_genres_dfs(self):
         for genre in self.genres:
@@ -77,7 +86,7 @@ class Training:
                 series = dataset.loc[song, self.attrs[len(self.attrs) - 2]]
 
                 # Todo order in dataset creation
-                series.sort(axis=0)
+                # series.sort(axis=0)
 
                 mfcc = AudioFeatures().get_perform_mfcc(series, self.sr)
 
