@@ -24,13 +24,14 @@ elif [[ ! -z $PACMAN_CMD ]]; then
         echo "----- PACMAN Dependencies: -----"
         sudo pacman -S parallel ffmpeg
 
+# TODO: To complete
 elif [[ ! -z $APT_CMD ]]; then
         echo "----- APT manager Dependencies -----"
         sudo apt install parallel ffmpeg
 
 elif [[ ! -z $APT_GET_CMD ]]; then
         echo "----- APT-GET manager Dependencies -----"
-        sudo apt-get install parallel ffmpeg
+        sudo apt-get install parallel ffmpeg libsndfile1
 
 else
         # No available package manager
