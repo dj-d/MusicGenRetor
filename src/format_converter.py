@@ -4,6 +4,7 @@ from pydub import AudioSegment
 script_path = path.dirname(path.realpath(__file__))
 dir_path = path.abspath(script_path + "/..") + "/old"
 
+# TODO: To improve
 for root, directories, files in walk(dir_path):
     for directory in directories:
         subdir_path = path.join(dir_path, directory)
