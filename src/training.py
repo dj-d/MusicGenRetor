@@ -1,13 +1,14 @@
 import os
 import sys
-from pip._vendor.distlib.compat import raw_input
-
-from conf import constants as cn
 
 import numpy as np
 import pandas as pd
+from pip._vendor.distlib.compat import raw_input
+from sklearn.preprocessing import minmax_scale
 
+from conf import constants as cn
 from src.audio_features import AudioFeatures
+
 
 # TODO: change the script name to a more meaningful one
 
@@ -89,6 +90,9 @@ class Training:
                 # series.sort(axis=0)
 
                 mfcc = AudioFeatures().get_perform_mfcc(series, self.sr)
+
+                # Normalize
+                mfcc = minmax_scale(mfcc)
 
                 model = self.genres_dfs[genre]['models']
 

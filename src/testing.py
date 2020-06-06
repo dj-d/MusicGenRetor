@@ -1,13 +1,15 @@
 import os
 import sys
 
-from conf import constants as cn
-
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pip._vendor.distlib.compat import raw_input
+from skimage.measure import compare_ssim as ssim
 from sklearn.metrics import mean_squared_error
+from sklearn.preprocessing import minmax_scale
 
+from conf import constants as cn
 from src.audio_features import AudioFeatures
 
 
@@ -39,7 +41,7 @@ class Testing:
                 self.testing()
 
     @staticmethod
-    def image_compare(image_a, image_b):
+    def mse(image_a, image_b):
         # TODO: check if need of a filter
         # image_a = image_a.iloc[:, 1:12]
         # image_b = image_b.iloc[:, 1:12]
@@ -69,14 +71,29 @@ class Testing:
         # song_image = audio_features.plot_perform_mfcc_by_values(models, sr)
 
         result = {}
-
+        score = []
         for genre in self.genres:
             model = pd.read_pickle(self.models_path + 'ImageModel_' + genre)
-            compare_value = self.image_compare(song, model)
-            result[genre] = compare_value
+            # compare_value = self.mse(song, model)
+            mse_value = self.mse(song, model)
+            ssim_value = ssim(song.to_numpy(), model.to_numpy())
+            # result[genre] = {mse_value, ssim_value}
+            score.append(mse_value)
+            score.append(ssim_value)
 
+        score = minmax_scale(score)
+
+        for genre in self.genres:
+            i = self.genres.index(genre)
+            result[genre] = score[i * 2] + score[(i * 2) + 1]
+
+        # Plots
+        sorted_res = sorted(result.items(), key=lambda kv: kv[1])
+        model = pd.read_pickle(self.models_path + 'ImageModel_' + sorted_res[0][0])
+        self.compare_images(song.to_numpy(), model.to_numpy())
         # return result
-        return sorted(result.items(), key=lambda kv: kv[1])
+
+        return sorted_res
 
     def testing(self):
         existing_datasets = 0
@@ -96,6 +113,9 @@ class Testing:
                 genre = df_test.loc[song, 'genre']
                 series = df_test.loc[song, self.attrs[len(self.attrs) - 2]]
 
+                # Minmax
+                series = minmax_scale(series)
+
                 # TODO: compare song by series not path
                 result = self.compare_song(series)
 
@@ -105,10 +125,11 @@ class Testing:
                 print(genre)
 
                 if result[0][0] == genre:
+                    print("---------- Good ----------")
                     total_accuracy += 1
                 else:
-                    print("---------- It not work ----------")
-                    print(result)
+                    print("---------- Bad ----------")
+                    # print(result)
 
                     # if res[0] == genre:
                     #     record_accuracy = len(genre) - list(result).index(res)
@@ -118,3 +139,22 @@ class Testing:
                 total_records += 1
 
         print('Accuracy:\t' + str(total_accuracy) + '\tMax Accuracy:\t' + str(total_records))
+
+    def compare_images(self, imageA, imageB):
+        print('Compare Image')
+
+        m = self.mse(imageA, imageB)
+        s = ssim(imageA, imageB)
+
+        fig = plt.figure('Compare')
+        plt.suptitle('MSE: %.2f, SSIM: %.2f' % (m, s))
+
+        ax = fig.add_subplot(1, 2, 1)
+        plt.imshow(imageA)
+        plt.axis('off')
+
+        ax = fig.add_subplot(1, 2, 2)
+        plt.imshow(imageB)
+        plt.axis('off')
+
+        plt.show()
