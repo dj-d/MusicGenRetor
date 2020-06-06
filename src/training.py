@@ -1,11 +1,11 @@
 import os
 
-from conf import constants as cn
-
 import numpy as np
 import pandas as pd
 
+from conf import constants as cn
 from src.audio_features import AudioFeatures
+
 
 # TODO: change the script name to a more meaningful one
 
@@ -15,6 +15,8 @@ class Training:
         self.dataset_base_name = cn.DATASET_BASE_NAME
 
         self.training_datasets_path = cn.TRAINING_DATASET_PATH
+
+        self.datasets_path = self.training_datasets_path + self.dataset_base_name
 
         self.models_path = cn.MODELS_PATH
 
@@ -58,12 +60,10 @@ class Training:
 
     def generate_models(self):
         # Define number of existing datasets
-        n_datasets = 1
+        n_datasets = 0
 
-        while os.path.exists(self.training_datasets_path + self.dataset_base_name + '_' + str(n_datasets)):
+        while os.path.exists(self.datasets_path + '_' + str(n_datasets + 1)):
             n_datasets += 1
-
-        n_datasets -= 1
 
         for n in range(1, n_datasets + 1):
             dataset = self.load_dataset(n)

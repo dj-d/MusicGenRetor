@@ -6,7 +6,7 @@ PATTERN='https://files.freemusicarchive.org/storage-freemusicarchive-org/music/'
 BASE_URL_ESCAPED=$(echo ${PATTERN} | sed 's/\//\\\//g')
 GENRES='Blues Electronic Classical Pop Rock Jazz'
 DIR="$( cd "$( dirname "$0" )" && pwd )"
-PAGE_NUMBERS=250
+PAGE_NUMBERS=10
 
 # Create songs directory
 cd "${DIR}/.."

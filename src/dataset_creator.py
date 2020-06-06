@@ -2,11 +2,10 @@ import os
 import random
 import sys
 
-from conf import constants as cn
-
 import pandas as pd
 from pip._vendor.distlib.compat import raw_input
 
+from conf import constants as cn
 from src.audio_features import AudioFeatures
 
 
@@ -126,12 +125,27 @@ class DatasetsCreator:
         file_name = os.path.basename(path)
         title = file_name.split('.')[0]
         bpm = audio_features.get_bpm()
+
+        # zero_crossing_rate = audio_features.get_zero_crossing_rate()
+        # audio_time_series = audio_features.get_audio_time_series()
+
+        spectrogram = audio_features.get_spectrogram_db()
         zero_crossing_rate = audio_features.get_zero_crossing_rate()
-        audio_time_series = audio_features.get_audio_time_series()
+        spectral_centroid = audio_features.get_spectral_centroid()
+        spectral_bandwidth = audio_features.get_spectral_bandwidth()
+        spectral_rolloff = audio_features.get_spectral_rolloff()
+        mfcc = audio_features.get_mfcc()
+        perform_mfcc = audio_features.get_perform_mfcc()
+        chroma_frequencies = audio_features.get_chroma_frequencies()
+
         genre = os.path.basename(os.path.dirname(path))
 
-        # Adding song to Dataset
-        song = pd.Series([title, bpm, zero_crossing_rate, audio_time_series, genre], index=self.attrs)
+        # Adding song to Dataset - Following the ATTRS constant order
+        # song = pd.Series([title, bpm, zero_crossing_rate, audio_time_series, genre], index=self.attrs)
+
+        song = pd.Series([title, bpm, spectrogram, zero_crossing_rate, spectral_centroid, spectral_bandwidth,
+                          spectral_rolloff, mfcc, perform_mfcc, chroma_frequencies, genre], index=self.attrs)
+
         df = df.append(song, ignore_index=True)
 
         return df

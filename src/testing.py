@@ -1,13 +1,12 @@
 import os
 import sys
 
-from conf import constants as cn
-
 import numpy as np
 import pandas as pd
 from pip._vendor.distlib.compat import raw_input
 from sklearn.metrics import mean_squared_error
 
+from conf import constants as cn
 from src.audio_features import AudioFeatures
 
 
@@ -104,11 +103,12 @@ class Testing:
                 print('-- Real genre --')
                 print(genre)
 
-                for res in result:
-                    if res[0] == genre:
-                        record_accuracy = len(genre) - list(result).index(res)
-                        total_accuracy += record_accuracy
-                        print('Song Accuracy:\t' + str(record_accuracy))
+                # for res in result:
+                if result[0] == genre:
+                    # record_accuracy = len(genre) - list(result).index(res)
+                    # total_accuracy += record_accuracy
+                    total_accuracy += 1
+                    # print('Song Accuracy:\t' + str(record_accuracy))
 
                 total_records += 1
 
