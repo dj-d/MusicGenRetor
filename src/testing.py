@@ -95,7 +95,9 @@ class Testing:
             i = self.genres.index(genre)
             # result[genre] = score[i * 2] + score[(i * 2) + 1]
             # result[genre] = score[i]
-            result[genre] = mse_res[i] + ssim_res[i]
+            # result[genre] = mse_res[i] + ssim_res[i]
+            result[genre] = ssim_res[i]
+
         # Plots
         sorted_res = sorted(result.items(), key=lambda kv: kv[1])
         model = pd.read_pickle(self.models_path + 'ImageModel_' + sorted_res[0][0])
