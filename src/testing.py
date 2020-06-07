@@ -75,18 +75,18 @@ class Testing:
         for genre in self.genres:
             model = pd.read_pickle(self.models_path + 'ImageModel_' + genre)
             # compare_value = self.mse(song, model)
-            mse_value = self.mse(song, model)
+            # mse_value = self.mse(song, model)
             ssim_value = ssim(song.to_numpy(), model.to_numpy())
             # result[genre] = {mse_value, ssim_value}
-            score.append(mse_value)
+            # score.append(mse_value)
             score.append(ssim_value)
 
         score = minmax_scale(score)
 
         for genre in self.genres:
             i = self.genres.index(genre)
-            result[genre] = score[i * 2] + score[(i * 2) + 1]
-
+            # result[genre] = score[i * 2] + score[(i * 2) + 1]
+            result[genre] = score[i]
         # Plots
         sorted_res = sorted(result.items(), key=lambda kv: kv[1])
         model = pd.read_pickle(self.models_path + 'ImageModel_' + sorted_res[0][0])
