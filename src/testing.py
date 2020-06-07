@@ -89,6 +89,7 @@ class Testing:
 
         # score = minmax_scale(score)
         mse_res = minmax_scale(mse_res)
+        ssim_res = minmax_scale(ssim_res)
 
         for genre in self.genres:
             i = self.genres.index(genre)
