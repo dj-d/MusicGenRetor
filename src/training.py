@@ -94,6 +94,7 @@ class Training:
                 # Normalize
                 mfcc = minmax_scale(mfcc)
 
+                # mfcc.sort() #REMOVED
                 model = self.genres_dfs[genre]['models']
 
                 for i in range(self.rows):

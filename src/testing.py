@@ -58,7 +58,7 @@ class Testing:
         # TODO: compare song by series not path
 
     def compare_song(self, series):
-        # series.sort(axis=0)
+        # series.sort(axis=0) #REMOVED
 
         # mfcc = AudioFeatures.get_perform_mfcc(series, sr)
         mfcc = AudioFeatures().get_perform_mfcc(series, self.sr)
@@ -72,6 +72,7 @@ class Testing:
 
         result = {}
         score = []
+
         for genre in self.genres:
             model = pd.read_pickle(self.models_path + 'ImageModel_' + genre)
             # compare_value = self.mse(song, model)
