@@ -139,6 +139,10 @@ class Testing:
                     total_accuracy += 1
                 else:
                     print("---------- Bad ----------")
+                    # Check second position
+                    if result[len(result) - 2][0] == genre:
+                        print("---------- Good ----------")
+                        total_accuracy += 1
                     # print(result)
 
                     # if res[0] == genre:
