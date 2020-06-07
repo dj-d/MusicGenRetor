@@ -72,22 +72,29 @@ class Testing:
 
         result = {}
         score = []
+        mse_res = []
+        ssim_res = []
 
         for genre in self.genres:
             model = pd.read_pickle(self.models_path + 'ImageModel_' + genre)
             # compare_value = self.mse(song, model)
-            # mse_value = self.mse(song, model)
+            mse_value = self.mse(song, model)
             ssim_value = ssim(song.to_numpy(), model.to_numpy())
             # result[genre] = {mse_value, ssim_value}
             # score.append(mse_value)
-            score.append(ssim_value)
+            # score.append(ssim_value)
+            # score.append({mse_value, ssim_value})
+            mse_res.append(mse_value)
+            ssim_res.append(ssim_value)
 
-        score = minmax_scale(score)
+        # score = minmax_scale(score)
+        mse_res = minmax_scale(mse_res)
 
         for genre in self.genres:
             i = self.genres.index(genre)
             # result[genre] = score[i * 2] + score[(i * 2) + 1]
-            result[genre] = score[i]
+            # result[genre] = score[i]
+            result[genre] = mse_res[i] + ssim_res[i]
         # Plots
         sorted_res = sorted(result.items(), key=lambda kv: kv[1])
         model = pd.read_pickle(self.models_path + 'ImageModel_' + sorted_res[0][0])
@@ -125,7 +132,8 @@ class Testing:
                 print('-- Real genre --')
                 print(genre)
 
-                if result[0][0] == genre:
+                # if result[0][0] == genre:
+                if result[len(result) - 1][0] == genre:
                     print("---------- Good ----------")
                     total_accuracy += 1
                 else:
