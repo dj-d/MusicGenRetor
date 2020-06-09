@@ -71,24 +71,27 @@ class Testing:
         # song_image = audio_features.plot_perform_mfcc_by_values(models, sr)
 
         result = {}
-        score = []
-        mse_res = []
+        # score = []
+        # mse_res = []
         ssim_res = []
 
         for genre in self.genres:
             model = pd.read_pickle(self.models_path + 'ImageModel_' + genre)
+
+            # Fix dimensions
+            model = model.iloc[:self.rows, :self.columns]
             # compare_value = self.mse(song, model)
-            mse_value = self.mse(song, model)
+            # mse_value = self.mse(song, model)
             ssim_value = ssim(song.to_numpy(), model.to_numpy())
             # result[genre] = {mse_value, ssim_value}
             # score.append(mse_value)
             # score.append(ssim_value)
             # score.append({mse_value, ssim_value})
-            mse_res.append(mse_value)
+            # mse_res.append(mse_value)
             ssim_res.append(ssim_value)
 
         # score = minmax_scale(score)
-        mse_res = minmax_scale(mse_res)
+        # mse_res = minmax_scale(mse_res)
         ssim_res = minmax_scale(ssim_res)
 
         for genre in self.genres:
@@ -100,8 +103,8 @@ class Testing:
 
         # Plots
         sorted_res = sorted(result.items(), key=lambda kv: kv[1])
-        model = pd.read_pickle(self.models_path + 'ImageModel_' + sorted_res[0][0])
-        self.compare_images(song.to_numpy(), model.to_numpy())
+        # model = pd.read_pickle(self.models_path + 'ImageModel_' + sorted_res[0][0])
+        # self.compare_images(song.to_numpy(), model.to_numpy())
         # return result
 
         return sorted_res
