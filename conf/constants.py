@@ -15,5 +15,5 @@ GENRES = ['Blues', 'Electronic', 'Classical', 'Pop', 'Rock', 'Jazz']
 SR = 22100
 
 ROWS = 20
-COLUMNS = 2000
+COLUMNS = 930
 # COLUMNS = 49
