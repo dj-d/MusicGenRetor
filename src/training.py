@@ -34,8 +34,6 @@ class Training:
         self.genres_dfs = {}
         self.init_genres_dfs()
 
-        self.IGNORE_LIST = cn.INGORE_LIST
-
         if os.path.exists(self.models_path + "ImageModel_Pop"):
             sys.stdout.write('Create new models? ' + '[y/N]')
             choice = raw_input().lower()
@@ -69,6 +67,7 @@ class Training:
                 print('No models file for ' + genre)
 
     def generate_models(self):
+        ignored = 0
         # Define number of existing datasets
         n_datasets = 1
 
@@ -81,33 +80,34 @@ class Training:
             dataset = self.load_dataset(n)
 
             for song in range(len(dataset)):
-                if dataset.loc[song, 'Title'] in self.IGNORE_LIST:
-                    print('#----- Skipping -----#')
-                    print(dataset.loc[song, 'Title'])
-                else:
-                    print('#----- Training -----#')
-                    print(dataset.loc[song, ['Title', 'genre']])
+                print('#----- Training -----#')
+                print(dataset.loc[song, ['Title', 'genre']])
 
-                    genre = dataset.loc[song, 'genre']
+                genre = dataset.loc[song, 'genre']
 
-                    series = dataset.loc[song, self.attrs[len(self.attrs) - 2]]
+                series = dataset.loc[song, self.attrs[len(self.attrs) - 2]]
 
-                    # Todo order in dataset creation
-                    # series.sort(axis=0)
+                # Todo order in dataset creation
+                # series.sort(axis=0)
 
-                    mfcc = AudioFeatures().get_perform_mfcc(series, self.sr)
+                mfcc = AudioFeatures().get_perform_mfcc(series, self.sr)
 
-                    # Normalize
-                    mfcc = minmax_scale(mfcc)
+                # Normalize
+                mfcc = minmax_scale(mfcc)
 
-                    # mfcc.sort() #REMOVED
-                    model = self.genres_dfs[genre]['models']
+                # mfcc.sort() #REMOVED
+                model = self.genres_dfs[genre]['models']
 
+                old_model = model
+                try:
                     for i in range(self.rows):
                         for j in range(self.columns):
                             model.iloc[i, j] += mfcc[i, j]
-
                     self.genres_dfs[genre]['n_songs'] += 1
+                except Exception as TooShortSongError:
+                    print(TooShortSongError)
+                    self.genres_dfs[genre]['models'] = old_model
+                    ignored += 1
 
         for genre in self.genres_dfs:
             model = self.genres_dfs[genre]['models']
@@ -120,3 +120,4 @@ class Training:
             if model.notnull().all().any():
                 AudioFeatures().plot_perform_mfcc_by_values(model, self.sr)
                 model.to_pickle(self.models_path + 'ImageModel_' + genre)
+        print('Ignored:\t' + str(ignored))
