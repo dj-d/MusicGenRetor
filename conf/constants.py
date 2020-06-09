@@ -17,3 +17,4 @@ SR = 22100
 ROWS = 20
 COLUMNS = 930
 # COLUMNS = 49
+INGORE_LIST = ['Dinura_Pradeep_Balasooriya_-_20_-_Cmaj9']
