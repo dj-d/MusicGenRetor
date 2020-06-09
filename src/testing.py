@@ -72,8 +72,12 @@ class Testing:
 
         result = {}
         score = []
-        mse_res = []
+        # mse_res = []
         ssim_res = []
+
+        # SONG_FILE_PATH = 'song.jpeg'
+        # im = Image.fromarray(song.to_numpy()).convert('L')
+        # im.save(SONG_FILE_PATH)
 
         for genre in self.genres:
             model = pd.read_pickle(self.models_path + 'ImageModel_' + genre)
@@ -84,11 +88,20 @@ class Testing:
             # score.append(mse_value)
             # score.append(ssim_value)
             # score.append({mse_value, ssim_value})
-            mse_res.append(mse_value)
+            # mse_res.append(mse_value)
             ssim_res.append(ssim_value)
 
+            # TODO insert in training
+            # MODEL_FILE_PATH = 'model.jpeg'
+            # im = Image.fromarray(model.to_numpy()).convert('L')
+            # im.save(MODEL_FILE_PATH)
+
+            # cv = CompareImage(SONG_FILE_PATH, MODEL_FILE_PATH)
+            # compare_score = cv.compare_image()
+            # print(compare_score)
+
         # score = minmax_scale(score)
-        mse_res = minmax_scale(mse_res)
+        # mse_res = minmax_scale(mse_res)
         ssim_res = minmax_scale(ssim_res)
 
         for genre in self.genres:
@@ -100,10 +113,10 @@ class Testing:
 
         # Plots
         sorted_res = sorted(result.items(), key=lambda kv: kv[1])
-        model = pd.read_pickle(self.models_path + 'ImageModel_' + sorted_res[0][0])
-        self.compare_images(song.to_numpy(), model.to_numpy())
-        # return result
+        # model = pd.read_pickle(self.models_path + 'ImageModel_' + sorted_res[0][0])
+        # self.compare_images(song.to_numpy(), model.to_numpy())
 
+        # return result
         return sorted_res
 
     def testing(self):
