@@ -138,29 +138,30 @@ class Testing:
                 # TODO: compare song by series not path
                 result = self.compare_song(series)
 
-                print('-- Result --')
-                print(result)
-                print('-- Real genre --')
-                print(genre)
+                if result is not None:
+                    print('-- Result --')
+                    print(result)
+                    print('-- Real genre --')
+                    print(genre)
 
-                # if result[0][0] == genre:
-                if result[len(result) - 1][0] == genre:
-                    print("---------- Good ----------")
-                    total_accuracy += 1
-                else:
-                    print("---------- Bad ----------")
-                    # Check second position
-                    if result[len(result) - 2][0] == genre:
+                    # if result[0][0] == genre:
+                    if result[len(result) - 1][0] == genre:
                         print("---------- Good ----------")
                         total_accuracy += 1
-                    # print(result)
+                    else:
+                        print("---------- Bad ----------")
+                        # Check second position
+                        if result[len(result) - 2][0] == genre:
+                            print("---------- Good ----------")
+                            total_accuracy += 1
+                        # print(result)
 
-                    # if res[0] == genre:
-                    #     record_accuracy = len(genre) - list(result).index(res)
-                    #     total_accuracy += record_accuracy
-                    #     print('Song Accuracy:\t' + str(record_accuracy))
+                        # if res[0] == genre:
+                        #     record_accuracy = len(genre) - list(result).index(res)
+                        #     total_accuracy += record_accuracy
+                        #     print('Song Accuracy:\t' + str(record_accuracy))
 
-                total_records += 1
+                    total_records += 1
 
         print('Accuracy:\t' + str(total_accuracy) + '\tMax Accuracy:\t' + str(total_records))
         print('Ignored:\t' + str(self.ignored))

@@ -98,7 +98,7 @@ class Training:
                 # mfcc.sort() #REMOVED
                 model = self.genres_dfs[genre]['models']
 
-                if len(model.columns) >= self.columns:
+                if len(mfcc[0]) >= self.columns:
                     for i in range(self.rows):
                         for j in range(self.columns):
                             model.iloc[i, j] += mfcc[i, j]
