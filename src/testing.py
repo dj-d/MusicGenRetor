@@ -64,7 +64,7 @@ class Testing:
 
         # mfcc = AudioFeatures.get_perform_mfcc(series, sr)
         mfcc = AudioFeatures().get_perform_mfcc(series, self.sr)
-
+        print(str(len(mfcc[0])))
         if len(mfcc[0]) < self.columns:
             print('Skipping: too short')
             self.ignored += 1
