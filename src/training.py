@@ -98,24 +98,24 @@ class Training:
                 # mfcc.sort() #REMOVED
                 model = self.genres_dfs[genre]['models']
 
-                old_model = model
-                try:
+                if len(model.columns) >= self.columns:
                     for i in range(self.rows):
                         for j in range(self.columns):
                             model.iloc[i, j] += mfcc[i, j]
                     self.genres_dfs[genre]['n_songs'] += 1
-                except Exception as TooShortSongError:
-                    print(TooShortSongError)
-                    self.genres_dfs[genre]['models'] = old_model
+                else:
+                    print('Skipping: too short')
                     ignored += 1
 
         for genre in self.genres_dfs:
             model = self.genres_dfs[genre]['models']
             n_songs = self.genres_dfs[genre]['n_songs']
 
-            for i in range(self.rows):
-                for j in range(self.columns):
-                    model.iloc[i, j] = model.iloc[i, j] / n_songs
+            # for i in range(self.rows):
+            #     for j in range(self.columns):
+            #         model.iloc[i, j] = model.iloc[i, j] / n_songs
+
+            model = model / n_songs
 
             if model.notnull().all().any():
                 AudioFeatures().plot_perform_mfcc_by_values(model, self.sr)

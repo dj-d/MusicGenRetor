@@ -32,6 +32,8 @@ class Testing:
         self.rows = cn.ROWS
         self.columns = cn.COLUMNS
 
+        self.ignored = 0
+
         # TODO: It shouldn't be here
         if os.path.exists(self.testing_datasets_path + self.dataset_base_name + '_1'):
             sys.stdout.write('Perform tests on the models? ' + '[y/N]')
@@ -62,52 +64,56 @@ class Testing:
 
         # mfcc = AudioFeatures.get_perform_mfcc(series, sr)
         mfcc = AudioFeatures().get_perform_mfcc(series, self.sr)
-        song = pd.DataFrame(np.zeros((self.rows, self.columns)))
 
-        for i in range(self.rows):
-            for j in range(self.columns):
-                song.iloc[i, j] += mfcc[i, j]
+        if len(mfcc[0]) < self.columns:
+            print('Skipping: too short')
+            self.ignored += 1
+        else:
+            song = pd.DataFrame(np.zeros((self.rows, self.columns)))
+            for i in range(self.rows):
+                for j in range(self.columns):
+                    song.iloc[i, j] += mfcc[i, j]
 
-        # song_image = audio_features.plot_perform_mfcc_by_values(models, sr)
+            # song_image = audio_features.plot_perform_mfcc_by_values(models, sr)
 
-        result = {}
-        # score = []
-        # mse_res = []
-        ssim_res = []
+            result = {}
+            # score = []
+            # mse_res = []
+            ssim_res = []
 
-        for genre in self.genres:
-            model = pd.read_pickle(self.models_path + 'ImageModel_' + genre)
+            for genre in self.genres:
+                model = pd.read_pickle(self.models_path + 'ImageModel_' + genre)
 
-            # Fix dimensions
-            model = model.iloc[:self.rows, :self.columns]
-            # compare_value = self.mse(song, model)
-            # mse_value = self.mse(song, model)
-            ssim_value = ssim(song.to_numpy(), model.to_numpy())
-            # result[genre] = {mse_value, ssim_value}
-            # score.append(mse_value)
-            # score.append(ssim_value)
-            # score.append({mse_value, ssim_value})
-            # mse_res.append(mse_value)
-            ssim_res.append(ssim_value)
+                # Fix dimensions
+                model = model.iloc[:self.rows, :self.columns]
+                # compare_value = self.mse(song, model)
+                # mse_value = self.mse(song, model)
+                ssim_value = ssim(song.to_numpy(), model.to_numpy())
+                # result[genre] = {mse_value, ssim_value}
+                # score.append(mse_value)
+                # score.append(ssim_value)
+                # score.append({mse_value, ssim_value})
+                # mse_res.append(mse_value)
+                ssim_res.append(ssim_value)
 
-        # score = minmax_scale(score)
-        # mse_res = minmax_scale(mse_res)
-        ssim_res = minmax_scale(ssim_res)
+            # score = minmax_scale(score)
+            # mse_res = minmax_scale(mse_res)
+            ssim_res = minmax_scale(ssim_res)
 
-        for genre in self.genres:
-            i = self.genres.index(genre)
-            # result[genre] = score[i * 2] + score[(i * 2) + 1]
-            # result[genre] = score[i]
-            # result[genre] = mse_res[i] + ssim_res[i]
-            result[genre] = ssim_res[i]
+            for genre in self.genres:
+                i = self.genres.index(genre)
+                # result[genre] = score[i * 2] + score[(i * 2) + 1]
+                # result[genre] = score[i]
+                # result[genre] = mse_res[i] + ssim_res[i]
+                result[genre] = ssim_res[i]
 
-        # Plots
-        sorted_res = sorted(result.items(), key=lambda kv: kv[1])
-        # model = pd.read_pickle(self.models_path + 'ImageModel_' + sorted_res[0][0])
-        # self.compare_images(song.to_numpy(), model.to_numpy())
-        # return result
+            # Plots
+            sorted_res = sorted(result.items(), key=lambda kv: kv[1])
+            # model = pd.read_pickle(self.models_path + 'ImageModel_' + sorted_res[0][0])
+            # self.compare_images(song.to_numpy(), model.to_numpy())
+            # return result
 
-        return sorted_res
+            return sorted_res
 
     def testing(self):
         existing_datasets = 0
@@ -158,6 +164,7 @@ class Testing:
                 total_records += 1
 
         print('Accuracy:\t' + str(total_accuracy) + '\tMax Accuracy:\t' + str(total_records))
+        print('Ignored:\t' + str(self.ignored))
 
     def compare_images(self, imageA, imageB):
         print('Compare Image')
