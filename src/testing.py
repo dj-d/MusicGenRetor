@@ -83,7 +83,6 @@ class Testing:
 
             for genre in self.genres:
                 model = pd.read_pickle(self.models_path + 'ImageModel_' + genre)
-
                 # Fix dimensions
                 model = model.iloc[:self.rows, :self.columns]
                 # compare_value = self.mse(song, model)
