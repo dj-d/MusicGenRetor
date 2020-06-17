@@ -142,11 +142,11 @@ class Testing:
         fig = plt.figure('Compare')
         plt.suptitle('MSE: %.2f, SSIM: %.2f' % (m, s))
 
-        ax = fig.add_subplot(1, 2, 1)
+        fig.add_subplot(1, 2, 1)
         plt.imshow(image_a)
         plt.axis('off')
 
-        ax = fig.add_subplot(1, 2, 2)
+        fig.add_subplot(1, 2, 2)
         plt.imshow(image_b)
         plt.axis('off')
 
