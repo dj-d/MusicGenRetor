@@ -54,7 +54,6 @@ class Training:
 
     def load_image_model(self, model_name):
         model = pd.read_pickle(model_name)
-
         AudioFeatures().plot_perform_mfcc_by_values(model, self.sr)
 
     def plot_models(self):
@@ -84,18 +83,11 @@ class Training:
                 print(dataset.loc[song, ['Title', 'genre']])
 
                 genre = dataset.loc[song, 'genre']
-
                 series = dataset.loc[song, self.attrs[len(self.attrs) - 2]]
-
-                # Todo order in dataset creation
-                # series.sort(axis=0)
-
                 mfcc = AudioFeatures().get_perform_mfcc(series, self.sr)
 
                 # Normalize
                 mfcc = minmax_scale(mfcc)
-
-                # mfcc.sort() #REMOVED
                 model = self.genres_dfs[genre]['models']
 
                 if len(mfcc[0]) >= self.columns:
@@ -110,11 +102,6 @@ class Training:
         for genre in self.genres_dfs:
             model = self.genres_dfs[genre]['models']
             n_songs = self.genres_dfs[genre]['n_songs']
-
-            # for i in range(self.rows):
-            #     for j in range(self.columns):
-            #         model.iloc[i, j] = model.iloc[i, j] / n_songs
-
             model = model / n_songs
 
             if model.notnull().all().any():

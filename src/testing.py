@@ -45,11 +45,6 @@ class Testing:
     @staticmethod
     def mse(image_a, image_b):
         # TODO: check if need of a filter
-        # image_a = image_a.iloc[:, 1:12]
-        # image_b = image_b.iloc[:, 1:12]
-        # AudioFeatures().plot_perform_mfcc_by_values(image_a, sr)
-        # AudioFeatures().plot_perform_mfcc_by_values(image_b, sr)
-
         return mean_squared_error(image_a, image_b)
 
     def compare_song_by_path(self, song_path):
@@ -60,9 +55,6 @@ class Testing:
         # TODO: compare song by series not path
 
     def compare_song(self, series):
-        # series.sort(axis=0) #REMOVED
-
-        # mfcc = AudioFeatures.get_perform_mfcc(series, sr)
         mfcc = AudioFeatures().get_perform_mfcc(series, self.sr)
         print(str(len(mfcc[0])))
         if len(mfcc[0]) < self.columns:
@@ -74,43 +66,24 @@ class Testing:
                 for j in range(self.columns):
                     song.iloc[i, j] += mfcc[i, j]
 
-            # song_image = audio_features.plot_perform_mfcc_by_values(models, sr)
-
             result = {}
-            # score = []
-            # mse_res = []
             ssim_res = []
 
             for genre in self.genres:
                 model = pd.read_pickle(self.models_path + 'ImageModel_' + genre)
                 # Fix dimensions
                 model = model.iloc[:self.rows, :self.columns]
-                # compare_value = self.mse(song, model)
-                # mse_value = self.mse(song, model)
                 ssim_value = ssim(song.to_numpy(), model.to_numpy())
-                # result[genre] = {mse_value, ssim_value}
-                # score.append(mse_value)
-                # score.append(ssim_value)
-                # score.append({mse_value, ssim_value})
-                # mse_res.append(mse_value)
                 ssim_res.append(ssim_value)
 
-            # score = minmax_scale(score)
-            # mse_res = minmax_scale(mse_res)
             ssim_res = minmax_scale(ssim_res)
 
             for genre in self.genres:
                 i = self.genres.index(genre)
-                # result[genre] = score[i * 2] + score[(i * 2) + 1]
-                # result[genre] = score[i]
-                # result[genre] = mse_res[i] + ssim_res[i]
                 result[genre] = ssim_res[i]
 
             # Plots
             sorted_res = sorted(result.items(), key=lambda kv: kv[1])
-            # model = pd.read_pickle(self.models_path + 'ImageModel_' + sorted_res[0][0])
-            # self.compare_images(song.to_numpy(), model.to_numpy())
-            # return result
 
             return sorted_res
 
@@ -154,33 +127,27 @@ class Testing:
                         if result[len(result) - 2][0] == genre:
                             print("---------- Good ----------")
                             total_accuracy += 1
-                        # print(result)
-
-                        # if res[0] == genre:
-                        #     record_accuracy = len(genre) - list(result).index(res)
-                        #     total_accuracy += record_accuracy
-                        #     print('Song Accuracy:\t' + str(record_accuracy))
 
                     total_records += 1
 
         print('Accuracy:\t' + str(total_accuracy) + '\tMax Accuracy:\t' + str(total_records))
         print('Ignored:\t' + str(self.ignored))
 
-    def compare_images(self, imageA, imageB):
+    def compare_images(self, image_a, image_b):
         print('Compare Image')
 
-        m = self.mse(imageA, imageB)
-        s = ssim(imageA, imageB)
+        m = self.mse(image_a, image_b)
+        s = ssim(image_a, image_b)
 
         fig = plt.figure('Compare')
         plt.suptitle('MSE: %.2f, SSIM: %.2f' % (m, s))
 
         ax = fig.add_subplot(1, 2, 1)
-        plt.imshow(imageA)
+        plt.imshow(image_a)
         plt.axis('off')
 
         ax = fig.add_subplot(1, 2, 2)
-        plt.imshow(imageB)
+        plt.imshow(image_b)
         plt.axis('off')
 
         plt.show()

@@ -2,21 +2,12 @@ import os
 import random
 import sys
 
-from conf import constants as cn
-
 import pandas as pd
 from pip._vendor.distlib.compat import raw_input
 
+from conf import constants as cn
 from src.audio_features import AudioFeatures
 
-
-# get_spectrogram_db
-# get_zero_crossing_rate
-# get_spectral_centroid
-# get_spectral_bandwidth
-# get_spectral_rolloff
-# get_mfcc | get_perform_mfcc
-# get_chroma_frequencies
 
 class DatasetsCreator:
     def __init__(self):
@@ -64,9 +55,7 @@ class DatasetsCreator:
             if choice == 'Y' or choice == 'y':
                 self.recreate = True
             else:
-                # TODO: It could be removed from here
                 self.upgrade = False
-
                 sys.stdout.write('Upgrade the dataset? ' + '[y/N]')
                 choice = raw_input().lower()
 
@@ -91,7 +80,6 @@ class DatasetsCreator:
 
     def bulk_manager(self, mode, dataset_type):
         dataset_path = self.datasets_directory + dataset_type + '/' + self.dataset_base_name
-
         existing_datasets = 1
 
         while os.path.exists(dataset_path + '_' + str(existing_datasets)):
@@ -139,7 +127,6 @@ class DatasetsCreator:
     @staticmethod
     def split_dataset(elements_number, split_percentage):
         numbers = range(0, elements_number)
-
         return random.sample(numbers, int(elements_number * split_percentage))
 
     def populate(self, data_path):
@@ -153,7 +140,6 @@ class DatasetsCreator:
                 print('\n---------- ' + directory + ' ----------\n')
 
                 files = os.listdir(subdir_path)
-
                 training_drawns = self.split_dataset(len(files), self.training_percentage)
 
                 genre_records = 0
@@ -161,12 +147,12 @@ class DatasetsCreator:
                 for file in files:
                     file_path = os.path.join(subdir_path, file)
                     file_name = os.path.basename(file_path)
-
                     title = file_name.split('.')[0]
 
                     print('Analyzing song: \t' + title)
 
-                    if title not in self.df_training[self.attrs[0]].values and title not in self.df_training[self.attrs[0]].values:
+                    if title not in self.df_training[self.attrs[0]].values and title not in self.df_testing[
+                        self.attrs[0]].values:
                         if genre_records in training_drawns:
                             self.df_training = self.load_song(file_path, self.df_training)
                             self.training_records += 1
@@ -175,7 +161,6 @@ class DatasetsCreator:
                                 self.bulk_manager(self.save, self.training_type)
                         else:
                             self.df_testing = self.load_song(file_path, self.df_testing)
-
                             self.testing_records += 1
 
                             if (self.testing_records % self.bulk_save_number) == 0:
