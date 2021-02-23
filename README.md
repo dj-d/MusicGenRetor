@@ -1,4 +1,3 @@
-![SonarQube](https://github.com/dj-d/MusicGenRetor/workflows/SonarQube/badge.svg)
 
 # MusicGenRetor
 Music genre classification with Machine Learning
