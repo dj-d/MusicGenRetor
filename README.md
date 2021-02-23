@@ -1,3 +1,4 @@
+[![SonarCloud](https://github.com/dj-d/MusicGenRetor/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/dj-d/MusicGenRetor/actions/workflows/sonarcloud.yml)
 
 # MusicGenRetor
 Music genre classification with Machine Learning
